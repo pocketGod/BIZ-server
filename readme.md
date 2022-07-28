@@ -15,6 +15,7 @@ npm i
 ## .env - enviormental variables
 please note the following missing enviorment variables due to no .env file
 
-PORT
-DBSTRING
-secretKey
+
+```bash
+PORT  ---  DBSTRING  ---  secretKey
+```
