@@ -22,6 +22,8 @@ if you dont have nodemon installed globaly please run the following
 node server
 ```
 
+use Postman or a vscode extension like Rest Client to get & post requests
+
 ## .env - enviormental variables
 
 please note the following missing enviorment variables due to no .env file
