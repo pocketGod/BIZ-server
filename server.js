@@ -17,7 +17,7 @@ app.use(express.urlencoded({extended:true}))
 app.use(logger)
 app.use('/api/register', register)
 app.use('/api/login', login)
-app.use('/api/profile', profile)
+app.use('/api/profile', auth, profile)
 app.use('/api/card', auth, bizCard)
 
 app.get('*', (req,res)=>{
