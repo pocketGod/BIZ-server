@@ -13,13 +13,7 @@ npm i
 ```
 
 ```bash
-npm run startServer    or    nodemon server 
-```
-
-if you dont have nodemon installed globaly please run the following
-
-```bash
-node server
+node server 
 ```
 
 use Postman or a vscode extension like Rest Client to get & post requests
