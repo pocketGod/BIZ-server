@@ -12,16 +12,15 @@ const cardSchema = joi.object({
     name: joi.string().required().min(2),
     description: joi.string().required().min(6),
     address: joi.string().required().min(3),
-    phone: joi.string().required().min(8),
+    phone: joi.string().required().min(8).regex(/^\+?(972\-?)?0?(([23489]{1}\-?\d{7})|[5]{1}\d{1}\-?\d{7})$/),
     img: joi.string().required()
 })
 
 
 const generateRandomID = async ()=>{
-    let ID = _.random(10, 1000)
+    let ID = _.random(1000, 999999)
     let bizCard = await Card.findOne({card_id:ID})
 
-    // if card_id already exists generate again
     if(bizCard) generateRandomID()
     else return ID
 }
@@ -31,14 +30,11 @@ router.post('/', async (req,res)=>{
         let {error} = cardSchema.validate(req.body)
         if(error) return res.status(400).send(error.message)
 
-        let bizCard = await Card.findOne({name: req.body.name})
-        if(bizCard) return res.status(400).send('bizCard already exists...')
-
-        bizCard = new Card(req.body)
+        let bizCard = new Card(req.body)
         bizCard.card_id = await generateRandomID()
 
-        let user = await User.findOne({_id:req.payload.id})
-        bizCard.user_id = user._id
+        
+        bizCard.user_id = req.payload.id
 
         await bizCard.save()
         
@@ -50,20 +46,10 @@ router.post('/', async (req,res)=>{
     }
 })
 
-router.get('/all', async (req,res)=>{
-    try {
-        let cards = await Card.find()
-        if(cards.length == 0) return res.status(400).send('No Cards in DB')
 
-        res.status(200).send(cards)
-    } catch (error) {
-        res.status(400).send('ERROR in GET all cards')
-    }
-})
-
-router.get('/all/:user_id', async (req,res)=>{
+router.get('/my-cards', async (req,res)=>{
     try {
-        let cards = await Card.find({user_id:req.params.user_id})
+        let cards = await Card.find({user_id:req.payload.id})
         if(cards.length == 0) return res.status(400).send('No Cards Under This UserID')
 
         res.status(200).send(cards)
@@ -73,10 +59,9 @@ router.get('/all/:user_id', async (req,res)=>{
 })
 
 
-
 router.get('/:card_id', async (req,res)=>{
     try {
-        let card = await Card.findOne({card_id: req.params.card_id})
+        let card = await Card.findOne({_id: req.params.card_id, user_id:req.payload.id})
         if(!card) return res.status(400).send('No such card in DB')
 
         res.status(200).send(card)
@@ -86,15 +71,13 @@ router.get('/:card_id', async (req,res)=>{
     }
 })
 
+
 router.put('/:card_id', async (req,res)=>{
     try {
-        let card = await Card.findOneAndUpdate({card_id: req.params.card_id},{
-            name: req.body.name,
-            description: req.body.description,
-            address: req.body.address,
-            phone: req.body.phone,
-            img: req.body.img
-         }, {new:true})
+        let {error} = cardSchema.validate(req.body)
+        if(error) return res.status(400).send(error.message)
+
+        let card = await Card.findOneAndUpdate({_id: req.params.card_id, user_id:req.payload.id}, req.body, {new:true})
 
         if(!card) return res.status(400).send('No such card in DB')
 
@@ -107,7 +90,7 @@ router.put('/:card_id', async (req,res)=>{
 
 router.delete('/:card_id', async (req,res)=>{
     try {
-        let card = await Card.findOneAndRemove({card_id: req.params.card_id})
+        let card = await Card.findOneAndRemove({_id: req.params.card_id,  user_id:req.payload.id})
         if(!card) return res.status(400).send('No such card in DB')
 
         res.status(200).send(`Card ${req.params.card_id} Was Deleted`)
@@ -116,6 +99,20 @@ router.delete('/:card_id', async (req,res)=>{
         res.status(400).send('ERROR in DELETE a specific card')
     }
 })
+
+
+router.get('/', async (req,res)=>{
+    try {
+        let cards = await Card.find()
+        if(cards.length == 0) return res.status(400).send('No Cards in DB')
+
+        res.status(200).send(cards)
+    } catch (error) {
+        res.status(400).send('ERROR in GET all cards')
+    }
+})
+
+
 
 
 

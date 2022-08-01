@@ -1,7 +1,6 @@
 const express = require('express')
 const joi = require('joi')
 const bcrypt = require('bcrypt')
-const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const { User } = require('../models/User')
 
@@ -25,7 +24,7 @@ router.post('/', async (req,res)=>{
 
         let token = jwt.sign({id:user._id, biz:user.biz}, process.env.secretKey)
         
-        res.status(200).send({info: _.pick(user, ['_id', 'name', 'email', 'biz']), token: token})
+        res.status(200).send({token: token})
 
     } catch (error) {
         res.status(400).send('ERROR in POST login')
