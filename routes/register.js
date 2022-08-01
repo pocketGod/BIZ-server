@@ -10,7 +10,8 @@ const router = express.Router()
 const registerScheme = joi.object({
     name: joi.string().required().min(2),
     email: joi.string().required().min(6).email(),
-    password: joi.string().required().min(5)
+    password: joi.string().required().min(5),
+    biz: joi.boolean().required()
 })
 
 
@@ -21,9 +22,6 @@ router.post('/', async(req,res)=>{
 
         let user = await User.findOne({email:req.body.email})
         if(user) return res.status(400).send('user already exists...')
-
-        //for non biz signup
-        req.body.biz = false
 
         user = new User(req.body)
 
