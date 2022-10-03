@@ -11,6 +11,11 @@ const cardSchema = new mongoose.Schema({
         required: true,
         minlength: 6,
     },
+    category:{
+        type: String,
+        required: true,
+        minlength: 2
+    },
     address:{
         type: String,
         required: true,

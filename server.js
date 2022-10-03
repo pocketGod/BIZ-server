@@ -9,11 +9,14 @@ const bizCard = require('./routes/card')
 const auth = require('./middlewares/auth')
 
 const app = express()
+const cors = require('cors')
 
 const PORT = process.env.PORT || 8000
 
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+app.use(cors())
+
 app.use(logger)
 app.use('/api/register', register)
 app.use('/api/login', login)
