@@ -12,5 +12,5 @@ https://github.com/pocketGod/BIZ-client
 
 if youre cloning this repo please note the following missing env variables:
 ```bash
-PORT  ---  DBSTRING  ---  secretKey
+PORT  ---  dbString  ---  secretKey
 ```
